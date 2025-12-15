@@ -1,0 +1,57 @@
+{
+  "DEVICE_METADATA": {
+    "localhost": {
+      "hostname": "UT2-1-Q3D",
+      "hwsku": "Force10-S6000",
+      "type": "AccessRouter",
+      "bgp_asn": "65020",
+      "docker_routing_config_mode": "unified",
+      "frr_mgmt_framework_config": "true"
+    }
+  },
+  "FEATURE": {
+    "bgp": { "state": "enabled" },
+    "mgmt-framework": { "state": "enabled" }
+  },
+  "LOOPBACK_INTERFACE": {
+    "Loopback0": {},
+    "Loopback0|55.55.55.55/32": {}
+  },
+  "PORT": {
+    "Ethernet0": {"admin_status": "up"}
+  },
+  "INTERFACE": {
+    "Ethernet0": {},
+    "Ethernet0|10.2.0.1/31": {}
+  },
+  "BGP_GLOBALS": {
+    "default": {
+      "local_asn": "65020",
+      "router_id": "55.55.55.55",
+      "log_nbr_state_changes": "true"
+    }
+  },
+  "BGP_NEIGHBOR": {
+    "default|10.2.0.0": { "asn": "65010", "admin_status": "up" }
+  },
+  "BGP_NEIGHBOR_AF": {
+    "default|10.2.0.0|ipv4_unicast": {
+      "admin_status": "true",
+      "route_map_in": "PERMIT_ALL",
+      "route_map_out": "PERMIT_ALL"
+    }
+  },
+  "ROUTE_MAP": {
+    "PERMIT_ALL|10": {
+      "route_operation": "permit"
+    }
+  },
+  "ROUTE_MAP_SET": {
+    "PERMIT_ALL": {}
+  },
+  "BGP_NETWORK": {
+    "default|55.55.55.55/32": {}
+  },
+  "DEVICE_NEIGHBOR": {}
+}
+
