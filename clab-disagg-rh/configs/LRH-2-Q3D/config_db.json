@@ -1,0 +1,75 @@
+{
+  "DEVICE_METADATA": {
+    "localhost": {
+      "hostname": "LRH-2-Q3D",
+      "hwsku": "Force10-S6000",
+      "type": "LeafRouter",
+      "bgp_asn": "65011",
+      "docker_routing_config_mode": "unified",
+      "frr_mgmt_framework_config": "true"
+    }
+  },
+  "FEATURE": {
+    "bgp": { "state": "enabled" },
+    "mgmt-framework": { "state": "enabled" }
+  },
+  "LOOPBACK_INTERFACE": {
+    "Loopback0": {},
+    "Loopback0|44.44.44.44/32": {}
+  },
+  "PORT": {
+    "Ethernet0": {"admin_status": "up"},
+    "Ethernet4": {"admin_status": "up"},
+    "Ethernet8": {"admin_status": "up"}
+  },
+  "INTERFACE": {
+    "Ethernet0": {},
+    "Ethernet4": {},
+    "Ethernet8": {},
+    "Ethernet0|10.1.1.1/31": {},
+    "Ethernet4|10.1.3.1/31": {},
+    "Ethernet8|10.2.1.0/31": {}
+  },
+  "BGP_GLOBALS": {
+    "default": {
+      "local_asn": "65011",
+      "router_id": "44.44.44.44",
+      "log_nbr_state_changes": "true"
+    }
+  },
+  "BGP_NEIGHBOR": {
+    "default|10.1.1.0": { "asn": "65001", "admin_status": "up" },
+    "default|10.1.3.0": { "asn": "65002", "admin_status": "up" },
+    "default|10.2.1.1": { "asn": "65021", "admin_status": "up" }
+  },
+  "BGP_NEIGHBOR_AF": {
+    "default|10.1.1.0|ipv4_unicast": {
+      "admin_status": "true",
+      "route_map_in": "PERMIT_ALL",
+      "route_map_out": "PERMIT_ALL"
+    },
+    "default|10.1.3.0|ipv4_unicast": {
+      "admin_status": "true",
+      "route_map_in": "PERMIT_ALL",
+      "route_map_out": "PERMIT_ALL"
+    },
+    "default|10.2.1.1|ipv4_unicast": {
+      "admin_status": "true",
+      "route_map_in": "PERMIT_ALL",
+      "route_map_out": "PERMIT_ALL"
+    }
+  },
+  "ROUTE_MAP": {
+    "PERMIT_ALL|10": {
+      "route_operation": "permit"
+    }
+  },
+  "ROUTE_MAP_SET": {
+    "PERMIT_ALL": {}
+  },
+  "BGP_NETWORK": {
+    "default|44.44.44.44/32": {}
+  },
+  "DEVICE_NEIGHBOR": {}
+}
+
