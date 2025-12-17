@@ -97,12 +97,15 @@ sudo clab deploy -t disagg-clos.clab.yml
 bash configure_network.sh
 ```
 
-(MUST RUN TWICE) This single script configures all nodes using `docker exec`:
-- All interface IP addresses using SONiC `config` command
-- Loopback interfaces for each node
-- BGP with proper ASNs and router IDs using `vtysh`
-- BGP route advertisements for loopback networks
-- Waits 30 seconds for BGP convergence
+This single script configures all nodes using `docker exec`:
+- Brings up containerlab eth interfaces (eth1-eth4)
+- Enables bgpd daemon on all containers
+- Configures all interface IP addresses using `vtysh`
+- Configures loopback interfaces for each node
+- Configures BGP with proper ASNs and router IDs using `vtysh`
+- Configures BGP route advertisements for loopback networks
+- Waits 5 seconds for BGP convergence
+- Verifies BGP status on all nodes
 
 ## Testing
 

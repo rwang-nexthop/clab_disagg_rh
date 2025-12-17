@@ -231,113 +231,8 @@ fi
 echo -e "${GREEN}✓ All containers are running${NC}"
 echo ""
 
-# Step 1: Bring up eth interfaces
-echo -e "${BLUE}Step 1: Bringing up containerlab eth interfaces...${NC}"
-echo "-------------------------------------------"
-
-# Tier 0 nodes (eth1-eth2 for 2 spine connections each)
-for i in 1 2; do
-    docker exec clab-disagg-clos-RWA-$i ip link set eth1 up
-    docker exec clab-disagg-clos-RWA-$i ip link set eth2 up
-done
-
-# Tier 1 nodes (eth1-eth4 for 2 root + 2 leaf connections each)
-for i in 1 2; do
-    docker exec clab-disagg-clos-URH-$i-TH5 ip link set eth1 up
-    docker exec clab-disagg-clos-URH-$i-TH5 ip link set eth2 up
-    docker exec clab-disagg-clos-URH-$i-TH5 ip link set eth3 up
-    docker exec clab-disagg-clos-URH-$i-TH5 ip link set eth4 up
-done
-
-# Tier 2 nodes (eth1-eth3 for 2 spine + 1 access connection each)
-for i in 1 2; do
-    docker exec clab-disagg-clos-LRH-$i-Q3D ip link set eth1 up
-    docker exec clab-disagg-clos-LRH-$i-Q3D ip link set eth2 up
-    docker exec clab-disagg-clos-LRH-$i-Q3D ip link set eth3 up
-done
-
-# Tier 3 nodes (eth1 for 1 leaf connection each)
-docker exec clab-disagg-clos-UT2-1-Q3D ip link set eth1 up
-docker exec clab-disagg-clos-UT2-2-Q3D ip link set eth1 up
-
-echo -e "${GREEN}✓ All eth interfaces are up${NC}"
-sleep 2
-echo ""
-
-# Step 2: Configure interfaces and IP addresses
-echo -e "${BLUE}Step 2: Configuring interfaces and IP addresses...${NC}"
-echo "-------------------------------------------"
-
-# Tier 0 - RWA-1 interfaces
-docker exec clab-disagg-clos-RWA-1 config interface ip add Ethernet0 10.0.0.0/31 2>/dev/null || true
-docker exec clab-disagg-clos-RWA-1 config interface startup Ethernet0 2>/dev/null || true
-docker exec clab-disagg-clos-RWA-1 config interface ip add Ethernet4 10.0.1.0/31 2>/dev/null || true
-docker exec clab-disagg-clos-RWA-1 config interface startup Ethernet4 2>/dev/null || true
-docker exec clab-disagg-clos-RWA-1 config interface ip add Loopback0 1.1.1.1/32 2>/dev/null || true
-
-# Tier 0 - RWA-2 interfaces
-docker exec clab-disagg-clos-RWA-2 config interface ip add Ethernet0 10.0.0.2/31 2>/dev/null || true
-docker exec clab-disagg-clos-RWA-2 config interface startup Ethernet0 2>/dev/null || true
-docker exec clab-disagg-clos-RWA-2 config interface ip add Ethernet4 10.0.1.2/31 2>/dev/null || true
-docker exec clab-disagg-clos-RWA-2 config interface startup Ethernet4 2>/dev/null || true
-docker exec clab-disagg-clos-RWA-2 config interface ip add Loopback0 2.2.2.2/32 2>/dev/null || true
-
-# Tier 1 - URH-1-TH5 interfaces
-docker exec clab-disagg-clos-URH-1-TH5 config interface ip add Ethernet0 10.0.0.1/31 2>/dev/null || true
-docker exec clab-disagg-clos-URH-1-TH5 config interface startup Ethernet0 2>/dev/null || true
-docker exec clab-disagg-clos-URH-1-TH5 config interface ip add Ethernet4 10.0.0.3/31 2>/dev/null || true
-docker exec clab-disagg-clos-URH-1-TH5 config interface startup Ethernet4 2>/dev/null || true
-docker exec clab-disagg-clos-URH-1-TH5 config interface ip add Ethernet8 10.1.0.0/31 2>/dev/null || true
-docker exec clab-disagg-clos-URH-1-TH5 config interface startup Ethernet8 2>/dev/null || true
-docker exec clab-disagg-clos-URH-1-TH5 config interface ip add Ethernet12 10.1.1.0/31 2>/dev/null || true
-docker exec clab-disagg-clos-URH-1-TH5 config interface startup Ethernet12 2>/dev/null || true
-docker exec clab-disagg-clos-URH-1-TH5 config interface ip add Loopback0 11.11.11.11/32 2>/dev/null || true
-
-# Tier 1 - URH-2-TH5 interfaces
-docker exec clab-disagg-clos-URH-2-TH5 config interface ip add Ethernet0 10.0.1.1/31 2>/dev/null || true
-docker exec clab-disagg-clos-URH-2-TH5 config interface startup Ethernet0 2>/dev/null || true
-docker exec clab-disagg-clos-URH-2-TH5 config interface ip add Ethernet4 10.0.1.3/31 2>/dev/null || true
-docker exec clab-disagg-clos-URH-2-TH5 config interface startup Ethernet4 2>/dev/null || true
-docker exec clab-disagg-clos-URH-2-TH5 config interface ip add Ethernet8 10.1.0.2/31 2>/dev/null || true
-docker exec clab-disagg-clos-URH-2-TH5 config interface startup Ethernet8 2>/dev/null || true
-docker exec clab-disagg-clos-URH-2-TH5 config interface ip add Ethernet12 10.1.1.2/31 2>/dev/null || true
-docker exec clab-disagg-clos-URH-2-TH5 config interface startup Ethernet12 2>/dev/null || true
-docker exec clab-disagg-clos-URH-2-TH5 config interface ip add Loopback0 22.22.22.22/32 2>/dev/null || true
-
-# Tier 2 - LRH-1-Q3D interfaces
-docker exec clab-disagg-clos-LRH-1-Q3D config interface ip add Ethernet0 10.1.0.1/31 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-1-Q3D config interface startup Ethernet0 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-1-Q3D config interface ip add Ethernet4 10.1.0.3/31 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-1-Q3D config interface startup Ethernet4 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-1-Q3D config interface ip add Ethernet8 10.2.0.0/31 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-1-Q3D config interface startup Ethernet8 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-1-Q3D config interface ip add Loopback0 33.33.33.33/32 2>/dev/null || true
-
-# Tier 2 - LRH-2-Q3D interfaces
-docker exec clab-disagg-clos-LRH-2-Q3D config interface ip add Ethernet0 10.1.1.1/31 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-2-Q3D config interface startup Ethernet0 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-2-Q3D config interface ip add Ethernet4 10.1.1.3/31 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-2-Q3D config interface startup Ethernet4 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-2-Q3D config interface ip add Ethernet8 10.2.1.0/31 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-2-Q3D config interface startup Ethernet8 2>/dev/null || true
-docker exec clab-disagg-clos-LRH-2-Q3D config interface ip add Loopback0 44.44.44.44/32 2>/dev/null || true
-
-# Tier 3 - UT2-1-Q3D interfaces
-docker exec clab-disagg-clos-UT2-1-Q3D config interface ip add Ethernet0 10.2.0.1/31 2>/dev/null || true
-docker exec clab-disagg-clos-UT2-1-Q3D config interface startup Ethernet0 2>/dev/null || true
-docker exec clab-disagg-clos-UT2-1-Q3D config interface ip add Loopback0 55.55.55.55/32 2>/dev/null || true
-
-# Tier 3 - UT2-2-Q3D interfaces
-docker exec clab-disagg-clos-UT2-2-Q3D config interface ip add Ethernet0 10.2.1.1/31 2>/dev/null || true
-docker exec clab-disagg-clos-UT2-2-Q3D config interface startup Ethernet0 2>/dev/null || true
-docker exec clab-disagg-clos-UT2-2-Q3D config interface ip add Loopback0 66.66.66.66/32 2>/dev/null || true
-
-echo -e "${GREEN}✓ All interfaces configured${NC}"
-sleep 5
-echo ""
-
-# Step 3: Enable bgpd on all containers
-echo -e "${BLUE}Step 3: Enabling bgpd daemon on all containers...${NC}"
+# Step 1: Enable bgpd on all containers FIRST (before bringing up interfaces)
+echo -e "${BLUE}Step 1: Enabling bgpd daemon on all containers...${NC}"
 echo "--------------------------------------------------"
 
 for container in "${ALL_CONTAINERS[@]}"; do
@@ -347,6 +242,181 @@ for container in "${ALL_CONTAINERS[@]}"; do
 done
 
 echo -e "${GREEN}✓ bgpd enabled on all containers${NC}"
+echo ""
+
+# Wait for FRR daemons to be ready
+echo "Waiting for FRR daemons to be ready..."
+sleep 5
+echo ""
+
+# Step 2: Bring up containerlab eth interfaces AFTER FRR is ready
+echo -e "${BLUE}Step 2: Bringing up containerlab eth interfaces...${NC}"
+echo "-------------------------------------------"
+
+# Tier 0 nodes (eth1-eth2 for 2 spine connections each)
+for i in 1 2; do
+    docker exec clab-disagg-clos-RWA-$i ip link set eth1 up 2>/dev/null || true
+    docker exec clab-disagg-clos-RWA-$i ip link set eth2 up 2>/dev/null || true
+done
+
+# Tier 1 nodes (eth1-eth4 for 2 root + 2 leaf connections each)
+for i in 1 2; do
+    docker exec clab-disagg-clos-URH-$i-TH5 ip link set eth1 up 2>/dev/null || true
+    docker exec clab-disagg-clos-URH-$i-TH5 ip link set eth2 up 2>/dev/null || true
+    docker exec clab-disagg-clos-URH-$i-TH5 ip link set eth3 up 2>/dev/null || true
+    docker exec clab-disagg-clos-URH-$i-TH5 ip link set eth4 up 2>/dev/null || true
+done
+
+# Tier 2 nodes (eth1-eth3 for 2 spine + 1 access connection each)
+for i in 1 2; do
+    docker exec clab-disagg-clos-LRH-$i-Q3D ip link set eth1 up 2>/dev/null || true
+    docker exec clab-disagg-clos-LRH-$i-Q3D ip link set eth2 up 2>/dev/null || true
+    docker exec clab-disagg-clos-LRH-$i-Q3D ip link set eth3 up 2>/dev/null || true
+done
+
+# Tier 3 nodes (eth1 for 1 leaf connection each)
+docker exec clab-disagg-clos-UT2-1-Q3D ip link set eth1 up 2>/dev/null || true
+docker exec clab-disagg-clos-UT2-2-Q3D ip link set eth1 up 2>/dev/null || true
+
+echo -e "${GREEN}✓ All eth interfaces are up${NC}"
+sleep 2
+echo ""
+
+# Step 3: Configure interfaces and IP addresses
+echo -e "${BLUE}Step 3: Configuring interfaces and IP addresses...${NC}"
+echo "-------------------------------------------"
+echo ""
+
+# Tier 0 - RWA-1 interfaces
+docker exec clab-disagg-clos-RWA-1 vtysh -c "configure terminal" \
+    -c "interface Ethernet0" \
+    -c "ip address 10.0.0.0/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet4" \
+    -c "ip address 10.0.1.0/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Loopback0" \
+    -c "ip address 1.1.1.1/32" \
+    -c "exit" 2>&1 | grep -v "Unknown command" || true
+
+# Tier 0 - RWA-2 interfaces
+docker exec clab-disagg-clos-RWA-2 vtysh -c "configure terminal" \
+    -c "interface Ethernet0" \
+    -c "ip address 10.0.0.2/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet4" \
+    -c "ip address 10.0.1.2/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Loopback0" \
+    -c "ip address 2.2.2.2/32" \
+    -c "exit" 2>&1 | grep -v "Unknown command" || true
+
+# Tier 1 - URH-1-TH5 interfaces
+docker exec clab-disagg-clos-URH-1-TH5 vtysh -c "configure terminal" \
+    -c "interface Ethernet0" \
+    -c "ip address 10.0.0.1/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet4" \
+    -c "ip address 10.0.0.3/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet8" \
+    -c "ip address 10.1.0.0/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet12" \
+    -c "ip address 10.1.1.0/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Loopback0" \
+    -c "ip address 11.11.11.11/32" \
+    -c "exit" 2>&1 | grep -v "Unknown command" || true
+
+# Tier 1 - URH-2-TH5 interfaces
+docker exec clab-disagg-clos-URH-2-TH5 vtysh -c "configure terminal" \
+    -c "interface Ethernet0" \
+    -c "ip address 10.0.1.1/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet4" \
+    -c "ip address 10.0.1.3/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet8" \
+    -c "ip address 10.1.0.2/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet12" \
+    -c "ip address 10.1.1.2/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Loopback0" \
+    -c "ip address 22.22.22.22/32" \
+    -c "exit" 2>&1 | grep -v "Unknown command" || true
+
+# Tier 2 - LRH-1-Q3D interfaces
+docker exec clab-disagg-clos-LRH-1-Q3D vtysh -c "configure terminal" \
+    -c "interface Ethernet0" \
+    -c "ip address 10.1.0.1/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet4" \
+    -c "ip address 10.1.0.3/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet8" \
+    -c "ip address 10.2.0.0/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Loopback0" \
+    -c "ip address 33.33.33.33/32" \
+    -c "exit" 2>&1 | grep -v "Unknown command" || true
+
+# Tier 2 - LRH-2-Q3D interfaces
+docker exec clab-disagg-clos-LRH-2-Q3D vtysh -c "configure terminal" \
+    -c "interface Ethernet0" \
+    -c "ip address 10.1.1.1/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet4" \
+    -c "ip address 10.1.1.3/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Ethernet8" \
+    -c "ip address 10.2.1.0/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Loopback0" \
+    -c "ip address 44.44.44.44/32" \
+    -c "exit" 2>&1 | grep -v "Unknown command" || true
+
+# Tier 3 - UT2-1-Q3D interfaces
+docker exec clab-disagg-clos-UT2-1-Q3D vtysh -c "configure terminal" \
+    -c "interface Ethernet0" \
+    -c "ip address 10.2.0.1/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Loopback0" \
+    -c "ip address 55.55.55.55/32" \
+    -c "exit" 2>&1 | grep -v "Unknown command" || true
+
+# Tier 3 - UT2-2-Q3D interfaces
+docker exec clab-disagg-clos-UT2-2-Q3D vtysh -c "configure terminal" \
+    -c "interface Ethernet0" \
+    -c "ip address 10.2.1.1/31" \
+    -c "no shutdown" \
+    -c "exit" \
+    -c "interface Loopback0" \
+    -c "ip address 66.66.66.66/32" \
+    -c "exit" 2>&1 | grep -v "Unknown command" || true
+
+echo -e "${GREEN}✓ All interfaces configured${NC}"
+sleep 5
 echo ""
 
 # Step 4: Configure BGP on Tier 0 (Root) routers
@@ -392,8 +462,8 @@ echo ""
 # Step 8: Wait for BGP sessions to establish and exchange routes
 echo -e "${BLUE}Step 8: Waiting for BGP sessions to establish and exchange routes...${NC}"
 echo "----------------------------------------------------------------------"
-echo "Waiting 60 seconds for BGP convergence..."
-sleep 60
+echo "Waiting 5 seconds for BGP convergence..."
+sleep 5
 echo -e "${GREEN}✓ BGP convergence complete${NC}"
 echo ""
 
